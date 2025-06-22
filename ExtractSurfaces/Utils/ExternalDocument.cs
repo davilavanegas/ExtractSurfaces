@@ -10,6 +10,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.Civil.ApplicationServices;
 using Autodesk.Civil.DatabaseServices;
+using ExtractSurfaces.Extensions;
 
 namespace CivilAPI.Extensions
 {
@@ -73,11 +74,12 @@ namespace CivilAPI.Extensions
                 using (Database db = new Database(false, true))
                 {
                     db.ReadDwgFile(templateFilePath, FileShare.Read, true, null);
+                    db.CloseInput(true);
                     db.SaveAs(filePath, DwgVersion.Current);
                 }
                 return LoadFromFile(filePath);
             }
-            catch { throw; }
+            catch(Exception ex) { UtilDebug.DebugLog(ex.Message+"\n StacK:"+ex.StackTrace); throw; }
         }
         public static void Save(this Database database)
         {
