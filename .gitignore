@@ -1,3 +1,5 @@
 **/.vs
 **/bin
 **/obj
+/ExtractSurfaces/Utils/Playgournd.cs
+/ExtractSurfaces/Utils/FolderSelection.cs
