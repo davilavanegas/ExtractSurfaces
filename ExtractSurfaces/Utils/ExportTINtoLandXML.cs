@@ -3,9 +3,11 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
+using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.DatabaseServices;
 using ExtractSurfaces.Extensions;
 using System;
+using System.Data.SqlTypes;
 using System.IO;
 
 
@@ -36,6 +38,14 @@ public class LandXmlExporter
 
         if (res.Status != PromptStatus.OK)
             return;
+        var dlg = new OpenFileOrFolderDialog("Select Folder to save Extracted Surfaces", "", "xml", "", OpenFileDialog.OpenFileDialogFlags.AllowFoldersOnly);
+        string filePath = string.Empty;
+        if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            filePath = dlg.FileOrFoldername;
+            //UtilDebug.DebugWline(filePath);
+        }
+       
         using (Transaction tr = doc.TransactionManager.StartTransaction())
         {
             Polyline polyline = (Polyline)tr.GetObject(oidPolyline, OpenMode.ForRead);
@@ -53,11 +63,11 @@ public class LandXmlExporter
             ed.WriteMessage(surface.GetTinProperties().NumberOfTriangles + "\n");
 
             //
-            string filePath = UtilDebug.IntPath + Path.DirectorySeparatorChar + surface.Name +".xml";
+            filePath += Path.DirectorySeparatorChar + surface.Name +".xml";
             ed.WriteMessage(filePath+"\n");
             myLandXML myLandXML = new myLandXML(filePath, surface);
             tr.Dispose();
         }
     }
-   
+
 }

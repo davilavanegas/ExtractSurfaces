@@ -55,6 +55,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -65,7 +66,9 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="Extensions\MyXmlClass.cs" />
+    <Compile Include="Utils\Playgournd.cs" />
     <Compile Include="Utils\ExportTINtoLandXML.cs" />
+    <Compile Include="Utils\FolderSelection.cs" />
     <Compile Include="Utils\UtilDebug.cs" />
     <Compile Include="Extensions\DatabaseExtensions.cs" />
     <Compile Include="Extensions\EditorExtensions.cs" />
