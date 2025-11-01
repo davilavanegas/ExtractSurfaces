@@ -9,7 +9,10 @@ Notas:
 ## Border Updated
 
 Original TinSample, cyan rectangle es el borde usado para el crop<br>
-![TinOriginal](/img/crop_tin.png)
+![TinOriginal](/img/_original_tin.png)
+
+<img src="/img/_original_tin.png" alt="Original TIN" width="300">
+
 
 Exported Crop Tin Resultante<br>
 ![TinCrop](/img/crop_tin.png)
