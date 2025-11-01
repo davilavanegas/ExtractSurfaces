@@ -17,7 +17,7 @@ Exported Crop Tin Resultante <br>
 
 
 >[!WARNING]
-Exported crop resultante fallara cuando el contorno genera más de un contorno en la superficie resulanto
+Exported crop resultante fallara cuando el contorno genera más de un border en la superficie resulante.
 ><img src="/img/fail_tin.png" alt="Fail" width="500">
 
 
