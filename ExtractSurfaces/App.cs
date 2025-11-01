@@ -18,6 +18,9 @@ using CivilAPI.Extensions;
 using ExtractSurfaces.Extensions;
 using System.Reflection;
 using Autodesk.Aec.Modeler;
+using TS = TopologySampleCS;
+using TopologySampleCS;
+
 
 namespace CivilAPI
 {
@@ -80,10 +83,11 @@ namespace CivilAPI
             Database database = document.Database;
             Editor editor = document.Editor;
 
+
             editor.WriteMessage("Extracting surfaces...\n");
 
             // Ensure the output directory exists
-            string directoryPath = "D:\\Surfaces";
+            string directoryPath = ExternalUtils.OpenFolderDialog("Select Destination Folder","xml");
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
@@ -92,20 +96,45 @@ namespace CivilAPI
             // Select objects
             ObjectId surfaceId = editor.PickObjectOfType("AECC_TIN_SURFACE", "Select surface: ");
             List<ObjectId> polylineIds = editor.PickObjectsOfType("LWPOLYLINE", "Select polylines: ");
-
+            
             List<Point2dCollection> point2dCols = new List<Point2dCollection>();
             using (Transaction tr = database.TransactionManager.StartTransaction())
             {
+                string name = "3D2u0mm0y";
+                string name1 = name + "a";
+
                 foreach (ObjectId polylineId in polylineIds)
                 {
-                    Polyline polyline = (Polyline)tr.GetObject(polylineId, OpenMode.ForRead);
-                    List<Point2d> points = polyline.GetPoints();
-                    Point2dCollection point2dCol = new Point2dCollection(points.ToArray());
-                    point2dCols.Add(point2dCol);
+                    //    Polyline polyline = (Polyline)tr.GetObject(polylineId, OpenMode.ForRead);
+                    //    List<Point2d> points = polyline.GetPoints();
+                    //    Point2dCollection point2dCol = new Point2dCollection(points.ToArray());
+                    //    point2dCols.Add(point2dCol);
 
                     using (Transaction tr2 = database.TransactionManager.StartTransaction())
                     {
                         TinSurface surface = (TinSurface)tr2.GetObject(surfaceId, OpenMode.ForRead);
+                        ObjectIdCollection sborders;
+                        sborders = surface.ExtractBorder(Autodesk.Civil.SurfaceExtractionSettingsType.Plan);
+
+                        ObjectIdCollection border = new ObjectIdCollection() { polylineId };
+                        
+                        //Selected polylines
+                        MapTopologyCreator creator = new MapTopologyCreator();
+                        creator.CreateMapTopology(name, border);
+
+                        //Surface Borders
+                        MapTopologyCreator creator1 = new MapTopologyCreator();
+                        creator1.CreateMapTopology(name1, sborders);
+
+                        PolygonOverlay overlay = new PolygonOverlay();
+                        overlay.Intersect(name, name1);
+                        Entity o = overlay.oEntity;
+
+                        TS.Utility.Delete(name);
+                        TS.Utility.Delete(name1);
+
+                        Polyline polyline = (Polyline)o;
+                        Point2dCollection point2dCol = new Point2dCollection(polyline.GetPoints().ToArray());
                         surface.BoundariesDefinition.AddBoundaries(point2dCol, 0.001, Autodesk.Civil.SurfaceBoundaryType.Outer, true);
 
                         string fileName = $"{surface.Name}_{polyline.Handle.Value}.xml";

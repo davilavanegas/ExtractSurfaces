@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.ApplicationServices;
 using Autodesk.Civil.DatabaseServices;
+using AcWi = Autodesk.AutoCAD.Windows;
 
 namespace CivilAPI.Extensions
 {
@@ -128,5 +130,18 @@ namespace CivilAPI.Extensions
             }
         }
 
+        public static string OpenFolderDialog(string title, string extension)
+        {
+            var openFileDialog = new AcWi.OpenFileOrFolderDialog(
+                title,
+                "",
+                "xml",
+                "",
+                AcWi.OpenFileDialog.OpenFileDialogFlags.AllowFoldersOnly);
+            var result = openFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+                return openFileDialog.FileOrFoldername;
+            return null;
+        }
     }
 }
