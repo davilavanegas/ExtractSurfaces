@@ -62,7 +62,7 @@ namespace TopologySampleCS
             {
                 Utility.AcadEditor.WriteMessage(string.Format("\nException throwed containing the error code: {0}", expt.ErrorCode));
             }
-            //Utility.AcadEditor.Regen();
+            Utility.AcadEditor.Regen();
         }
 
 
