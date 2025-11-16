@@ -35,12 +35,12 @@ namespace ExtractSurfaces.Extensions
 
         private static Document Doc = Application.DocumentManager.MdiActiveDocument;
         private static XmlWriter writer;
-        public myLandXML(string filePath, TinSurface tinSurface)
+        public myLandXML(string filePath, TinSurface tinSurface, string name)
         {
             GetAppName();
             writer = XmlWriter.Create(filePath, new XmlWriterSettings { Indent = true, Encoding = Encoding.UTF8 });
             Header();
-            xmlSurface(tinSurface);
+            xmlSurface(tinSurface, name);
 
             // Write the close tag for the root element.
             writer.WriteEndElement();
@@ -120,12 +120,12 @@ namespace ExtractSurfaces.Extensions
         }
 
 
-        private static void xmlSurface(TinSurface tinSurface)
+        private static void xmlSurface(TinSurface tinSurface, string name)
         {
             //Surface
             writer.WriteStartElement("Surfaces");
             writer.WriteStartElement("Surface");
-            writer.WriteAttributeString("name", tinSurface.Name);
+            writer.WriteAttributeString("name", name);
             writer.WriteAttributeString("desc", tinSurface.Description);
 
             writer.WriteStartElement("SourceData");

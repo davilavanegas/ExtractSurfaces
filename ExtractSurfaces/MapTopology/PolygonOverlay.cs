@@ -10,6 +10,7 @@ using Autodesk.Gis.Map;
 using Autodesk.Gis.Map.Topology;
 using Autodesk.AutoCAD.DatabaseServices;
 using System.Collections.Generic;
+using ExtractSurfaces.Extensions;
 
 namespace TopologySampleCS
 {
@@ -154,7 +155,6 @@ namespace TopologySampleCS
             //OverlayDataCollection sourceDataCollection = null;
             MapApplication mapApp = HostMapApplicationServices.Application;
             Topologies topos = mapApp.ActiveProject.Topologies;
-
             // Does the Source Topology exist to get information from
             if (topos.Exists(sourceTopologyName))
             {

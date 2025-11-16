@@ -98,6 +98,7 @@ namespace CivilAPI
             List<ObjectId> polylineIds = editor.PickObjectsOfType("LWPOLYLINE", "Select polylines: ");
             
             List<Point2dCollection> point2dCols = new List<Point2dCollection>();
+            Point2dCollection point2dCol = new Point2dCollection();
             using (Transaction tr = database.TransactionManager.StartTransaction())
             {
                 string name = "3D2u0mm0y";
@@ -105,43 +106,47 @@ namespace CivilAPI
 
                 foreach (ObjectId polylineId in polylineIds)
                 {
-                    //    Polyline polyline = (Polyline)tr.GetObject(polylineId, OpenMode.ForRead);
-                    //    List<Point2d> points = polyline.GetPoints();
-                    //    Point2dCollection point2dCol = new Point2dCollection(points.ToArray());
-                    //    point2dCols.Add(point2dCol);
+                    Polyline polyline = new Polyline();
 
                     using (Transaction tr2 = database.TransactionManager.StartTransaction())
                     {
                         TinSurface surface = (TinSurface)tr2.GetObject(surfaceId, OpenMode.ForRead);
                         ObjectIdCollection sborders;
                         sborders = surface.ExtractBorder(Autodesk.Civil.SurfaceExtractionSettingsType.Plan);
+                        try
+                        {
+                            ObjectIdCollection border = new ObjectIdCollection() { polylineId };
+                            //Selected polylines                            
+                            MapTopologyCreator creator = new MapTopologyCreator();
+                            creator.CreateMapTopology(name, border);
+                            
+                            //Surface Borders
+                            MapTopologyCreator creator1 = new MapTopologyCreator();
+                            creator1.CreateMapTopology(name1, sborders);
+                            
+                            PolygonOverlay overlay = new PolygonOverlay();
+                            overlay.Intersect(name, name1);
+                            Entity o = overlay.oEntity;
 
-                        ObjectIdCollection border = new ObjectIdCollection() { polylineId };
-                        
-                        //Selected polylines
-                        MapTopologyCreator creator = new MapTopologyCreator();
-                        creator.CreateMapTopology(name, border);
+                            TS.Utility.Delete(name);
+                            TS.Utility.Delete(name1);
 
-                        //Surface Borders
-                        MapTopologyCreator creator1 = new MapTopologyCreator();
-                        creator1.CreateMapTopology(name1, sborders);
-
-                        PolygonOverlay overlay = new PolygonOverlay();
-                        overlay.Intersect(name, name1);
-                        Entity o = overlay.oEntity;
-
-                        TS.Utility.Delete(name);
-                        TS.Utility.Delete(name1);
-
-                        Polyline polyline = (Polyline)o;
-                        Point2dCollection point2dCol = new Point2dCollection(polyline.GetPoints().ToArray());
+                            polyline = (Polyline)o;
+                        }
+                        catch (System.Exception ex)
+                        {
+                            UtilDebug.DebugLog(ex.GetType()+ ex.Message+ex.StackTrace+ex.InnerException);
+                            Polyline polyline2 = (Polyline)tr2.GetObject(polylineId, OpenMode.ForRead);
+                            polyline = polyline2;
+                        }
+                        point2dCol = new Point2dCollection(polyline.GetPoints().ToArray());
                         surface.BoundariesDefinition.AddBoundaries(point2dCol, 0.001, Autodesk.Civil.SurfaceBoundaryType.Outer, true);
 
                         string fileName = $"{surface.Name}_{polyline.Handle.Value}.xml";
                         string filePath = directoryPath + Path.DirectorySeparatorChar + fileName;
 
                         editor.WriteMessage(filePath + "\n");
-                        myLandXML myLandXML = new myLandXML(filePath, surface);
+                        myLandXML myLandXML = new myLandXML(filePath, surface,surface.Name+"_"+polyline.Handle.Value);
                         tr2.Dispose();
                     }
                 }
@@ -192,7 +197,7 @@ namespace CivilAPI
                 //
                 string filePath = UtilDebug.IntPath + Path.DirectorySeparatorChar + surface.Name + ".xml";
                 ed.WriteMessage(filePath + "\n");
-                myLandXML myLandXML = new myLandXML(filePath, surface);
+                myLandXML myLandXML = new myLandXML(filePath, surface, surface.Name + "_" + polyline.Handle.Value);
                 tr.Dispose();
             }
         }

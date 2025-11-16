@@ -9,6 +9,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.Gis.Map;
 using Autodesk.Gis.Map.Topology;
+using ExtractSurfaces.Extensions;
 
 namespace TopologySampleCS
 {
@@ -26,7 +27,7 @@ namespace TopologySampleCS
             string description = "";
 
             TopologyTypes topoType = TopologyTypes.Polygon;
-
+            
             CreateMapTopology(name, description, topoType, linkCollection);
         }
 
@@ -50,6 +51,8 @@ namespace TopologySampleCS
             TopologyModel topo = null;
             MapApplication mapApp = HostMapApplicationServices.Application;
             Topologies topos = mapApp.ActiveProject.Topologies;
+            if(topos.Exists(name))
+                topos.Delete(name,true);
             try
             {
                 topos.Create(name, linkCollection, nodeCollection, polygonCentroidCollection, topologyType);
