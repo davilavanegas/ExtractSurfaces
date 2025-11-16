@@ -9,16 +9,15 @@ Notas:
 ## Border Updated
 
 Original TinSample, cyan rectangle es el borde usado para el crop<br>
-![TinOriginal](/img/_original_tin.png)
-
-<img src="/img/_original_tin.png" alt="Original TIN" width="300">
+<img src="/img/_original_tin.png" alt="Original TIN" width="500">
 
 
-Exported Crop Tin Resultante<br>
-![TinCrop](/img/crop_tin.png)
+Exported Crop Tin Resultante <br>
+<img src="/img/crop_tin.png" alt="Cropped" width="500">
 
->[!IWARNING]
-Exported crop resultante fallara cuando el contorno genera más de un contorno en la superficie resulanto
-![TinFail](/img//fail_tin.png)
+
+>[!WARNING]
+Exported crop resultante fallara cuando el contorno genera más de un border en la superficie resulante.
+><img src="/img/fail_tin.png" alt="Fail" width="500">
 
 
